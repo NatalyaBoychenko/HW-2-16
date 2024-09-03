@@ -1,8 +1,10 @@
 package org.todolist.hw214.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.todolist.hw214.model.Note;
 import org.todolist.hw214.service.NoteService;
@@ -23,16 +25,23 @@ public class NoteController {
         return "list-note";
     }
 
-    @GetMapping("/add")
+    @GetMapping("/create")
     public String editNote(Model model){
         Note note = new Note();
+//        note.setAccess("#{private}");
         model.addAttribute("note", note);
         return "note-form";
     }
 
+
     @PostMapping("/save")
-    public String addNote(@ModelAttribute("note") Note note){
-        noteService.add(note);
+    public String addNote(@Valid @ModelAttribute("note") Note note, BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
+
+            return "save-error";
+
+        }
+        noteService.save(note);
         return "redirect:/note/list";
     }
 
@@ -47,6 +56,16 @@ public class NoteController {
     public String delete(@RequestParam("noteId") Long id){
         noteService.deleteById(id);
         return "redirect:/note/list";
+    }
+
+    @GetMapping("/share/{id}")
+    public String getPublicNote(@PathVariable Long id, Model model){
+        Note note = noteService.getById(id);
+        if (note.getAccess().equalsIgnoreCase("private") || note.getAccess().equalsIgnoreCase("приватна")){
+            return "access-denied";
+        }
+        model.addAttribute("note", note);
+        return "access-permit";
     }
 
 }

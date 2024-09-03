@@ -19,7 +19,7 @@ public class NoteService {
         return noteRepository.findAll();
     }
 
-    public Note add(Note note){
+    public Note save(Note note){
         return noteRepository.save(note);
     }
 
@@ -32,6 +32,7 @@ public class NoteService {
         Note savedNote = noteRepository.findById(note.getId()).orElseThrow(NoSuchElementException::new);
         savedNote.setTitle(note.getTitle());
         savedNote.setContent(note.getContent());
+        savedNote.setAccess(note.getAccess());
         noteRepository.save(savedNote);
 
     }

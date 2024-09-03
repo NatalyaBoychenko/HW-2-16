@@ -5,47 +5,119 @@
   <title>Notes</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+<style>
+  .container{
+   text-align:center;
+    vertical-align:middle;
+    color: -moz-mac-accentdarkestshadow;
+    font-family: 'coolsville';
+    font-size: large;
+  }
+
+  table {
+    border: 2px solid orange;
+    counter-reset: bubu;
+  }
+
+  td:nth-child(1) {
+    counter-increment: bubu;
+  }
+
+  td:nth-child(1)::before {
+    content: counter(bubu);
+  }
+
+</style>
 </head>
 <body>
+
 <div class="container">
-  <h3>TODO List</h3>
+  <img src="https://github.com/NatalyaBoychenko/HW-2-16/blob/main/image.png?raw=true" width="1300" >
+<!--  <h3>Мої нотатки</h3>-->
   <hr>
-  <a th:href="@{/note/add}"
-     class="btn btn-primary btn-sm mb-3">
-    Add Note
+
+
+  <a th:href="@{/note/create}"
+     class="btn btn-outline-primary me-md-2" th:text="#{create.message}" style="font-weight: bold; float: right " >
+    Створити нотатки
   </a>
 
-  <table class="table table-boarder table-stripe">
-    <thead class="table-dark">
+<br />
+<br />
 
-    <th>Title</th>
-    <th>Content</th>
-    <th>Action</th>
+  <table class="table table-striped ">
+
+    <thead>
+
+
+    <th style="background: #FFB6C1">#</th>
+    <th th:text="#{created.at}" style="background: #FFB6C1">Created At</th>
+    <th th:text="#{name}" style="background: #FFB6C1">Ім'я</th>
+    <th th:text="#{content}" style="background: #FFB6C1">Вміст</th>
+    <th th:text="#{access}" style="background: #FFB6C1">Доступ</th>
+    <th th:text="#{action}" style="background: #FFB6C1">Дії</th>
 
     </thead>
 
     <tbody>
-    <tr th:each="tempNote : ${notes}">
 
-      <td th:text="${tempNote.title}">Title</td>
+    <tr th:each="tempNote : ${notes}" >
+
+      <td></td>
+      <td th:text="${tempNote.date}" >Date</td>
+      <td th:text="${tempNote.title}" >Title</td>
       <td th:text="${tempNote.content}">Content</td>
+      <td th:text="${tempNote.access}" >Access</td>
+      <td >
 
-      <td>
+        <a th:href="@{/note/share/{id}(id = ${tempNote.id})}"
+           th:text="#{link}" class="btn btn-outline-info" style="font-weight: bold">
+          Link
+        </a>
+
         <a th:href="@{/note/edit(noteId=${tempNote.id})}"
-           class="btn btn-info btn-sm">
-          Update
+           th:text="#{edit}" class="btn btn-outline-success" style="font-weight: bold">
+          Редагувати
         </a>
 
+<!--&lt;!&ndash;        onclick="if (!(confirm('Are you sure you want to delete this note?'))) return false"&ndash;&gt;-->
         <a th:href="@{/note/delete(noteId=${tempNote.id})}"
-           class="btn btn-danger btn-sm"
-           onclick="if (!(confirm('Are you sure you want to delete this note?'))) return false">
-          Delete
+           class="btn btn-outline-danger"
+           th:attr="onclick='return confirm(\'' + #{button.delete} + '\');'"
+           th:text="#{delete}" style="font-weight: bold" >
+          Видалити
         </a>
-      </td>
 
+      </td>
     </tr>
+
     </tbody>
   </table>
+
+  <select id="locales" class="form-select fw-weight-bold" style="background-color: #FFE4C4; color: mediumslateblue; font-weight: bold; font-size: large">
+    <option selected th:text="#{lang.change}" ></option>
+    <option value="eng" th:text="#{lang.eng}"></option>
+    <option value="ukr" th:text="#{lang.ukr}"></option>
+    <option value="fr" th:text="#{lang.fr}"></option>
+    <option value="de" th:text="#{lang.de}"></option>
+    <option value="pl" th:text="#{lang.pl}"></option>
+  </select>
+
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js">
+  </script>
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $("#locales").change(function () {
+        var selectedOption = $('#locales').val();
+        if (selectedOption != ''){
+          window.location.replace('list?lang=' + selectedOption);
+        }
+      });
+    });
+  </script>
+
 </div>
+
 </body>
 </html>
